@@ -69,6 +69,8 @@ export async function createOrder(data: CreateOrderInput) {
 }
 
 export async function notifyStaffNewOrder(order: any) {
+  const staffRoom = getIO().sockets.adapter.rooms.get('staff');
+  console.log('Emitiendo order:created a staff. Sockets en la room:', staffRoom ? staffRoom.size : 0);
   getIO().to('staff').emit('order:created', order);
 }
 
