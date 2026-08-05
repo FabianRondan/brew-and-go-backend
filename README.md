@@ -72,6 +72,8 @@ npx prisma generate
 npm run dev
 ```
 
+- [x] Notificaciones en tiempo real (Socket.io)
+
 Crear un archivo `.env` en la raíz con:
 
 PORT=4000
