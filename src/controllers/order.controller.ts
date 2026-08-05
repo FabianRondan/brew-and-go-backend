@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { createOrder, getOrdersByUser, getAllOrders, updateOrderStatus } from '../services/order.service';
+import { createOrder, getOrdersByUser, getAllOrders, updateOrderStatus, notifyStaffNewOrder } from '../services/order.service';
 import { AuthRequest } from '../middlewares/auth.middleware';
 
 export async function create(req: AuthRequest, res: Response) {
@@ -13,6 +13,7 @@ export async function create(req: AuthRequest, res: Response) {
     const userId = req.user!.id;
 
     const order = await createOrder({ userId, items });
+    notifyStaffNewOrder(order);
     return res.status(201).json(order);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Error al crear el pedido';

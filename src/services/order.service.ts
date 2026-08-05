@@ -1,5 +1,6 @@
 import prisma from '../config/prisma';
 import { CreateOrderInput, UpdateOrderStatusInput } from '../types/order.types';
+import { getIO } from '../socket';
 
 export async function createOrder(data: CreateOrderInput) {
   if (data.items.length === 0) {
@@ -67,6 +68,10 @@ export async function createOrder(data: CreateOrderInput) {
   });
 }
 
+export async function notifyStaffNewOrder(order: any) {
+  getIO().to('staff').emit('order:created', order);
+}
+
 export async function getOrdersByUser(userId: string) {
   return prisma.order.findMany({
     where: { userId },
@@ -92,8 +97,12 @@ export async function updateOrderStatus(id: string, data: UpdateOrderStatusInput
     throw new Error('Pedido no encontrado');
   }
 
-  return prisma.order.update({
+  const updated = await prisma.order.update({
     where: { id },
     data: { status: data.status },
   });
+
+  getIO().to(`user:${updated.userId}`).emit('order:statusUpdated', updated);
+
+  return updated;
 }
