@@ -9,7 +9,21 @@ import reservationRoutes from './routes/reservation.routes';
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'https://brew-and-go-frontend.vercel.app',
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+}));
 app.use(express.json());
 
 app.get('/health', (_req, res) => {
