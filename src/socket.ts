@@ -16,13 +16,17 @@ export function initSocket(server: HTTPServer) {
 
   io.on('connection', (socket) => {
     socket.on('join', (payload: { userId?: string; role?: string }) => {
-      if (payload.userId) {
-        socket.join(`user:${payload.userId}`);
-      }
-      if (payload.role === 'ADMIN' || payload.role === 'EMPLEADO') {
-        socket.join('staff');
-      }
-    });
+  console.log('Join recibido:', payload);
+  if (payload.userId) {
+    socket.join(`user:${payload.userId}`);
+  }
+  if (payload.role === 'ADMIN' || payload.role === 'EMPLEADO') {
+    socket.join('staff');
+    console.log(`Socket ${socket.id} unido a staff`);
+  } else {
+    console.log(`Socket ${socket.id} NO se unió a staff. Rol recibido: "${payload.role}"`);
+  }
+});
   });
 
   return io;
